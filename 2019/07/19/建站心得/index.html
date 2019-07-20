@@ -87,21 +87,22 @@
                 <blockquote>
 <p>Hexo 是一个基于 Node.js 的开源静态博客平台，可以在数秒内渲染上千个页面，并且一键部署到 GitHub 等平台。</p>
 </blockquote>
+<a id="more"></a>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直想自己建一个博客，摸鱼摸到现在总算是简单的搭起来了。搞了两天是终于搞出来了个模样。但是因为相关的知识缺乏，所以基本上把大部分的坑都踩了一遍。写在这里就是来纪念一下第一次建站以及为其他人提前踩雷，好避免也走到弯路。</p>
-<p>我这次建站的流程是本地Windows配置hexo，利用hexo自带的推送功能推送到远程的vps上的hexo.git仓库。而vps上的hexo.git仓库配置了githook用于在推送到来时自动重新部署在vps上。</p>
+<p>我这次建站的流程是本地 Windows 配置 hexo，利用hexo自带的推送功能推送到远程的 vps 上的 hexo.git 仓库。而 vps 上的 hexo.git 仓库配置了 githook 用于在推送到来时自动重新部署在 vps 上。</p>
 <p>基本流程就是这样，那么就开始吧~</p>
-<h1 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h1><p>下面分为两个部分来说，一个是本地的windows环境，一个是vps上的linux环境。<br>我用的是windows10和debian9。其他的系统也大同小异。</p>
-<h2 id="Windows环境"><a href="#Windows环境" class="headerlink" title="Windows环境"></a>Windows环境</h2><h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><h4 id="git的下载"><a href="#git的下载" class="headerlink" title="git的下载"></a>git的下载</h4><p>你可以从<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">这个页面</a>下载git，并且安装。</p>
-<p>安装完成后，你如果想从cmd直接运行的git的话需要重启系统，因为windows10的环境变量不是实时更新的。更多相关资料可以点<a href="https://blog.csdn.net/liufangbaishi2014/article/details/75330766" target="_blank" rel="noopener">这里</a></p>
+<h1 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h1><p>下面分为两个部分来说，一个是本地的 windows 环境，一个是 vps 上的 linux 环境。<br>我用的是 windows10 和 debian9。其他的系统也大同小异。</p>
+<h2 id="Windows-环境"><a href="#Windows-环境" class="headerlink" title="Windows 环境"></a>Windows 环境</h2><h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><h4 id="git的下载"><a href="#git的下载" class="headerlink" title="git的下载"></a>git的下载</h4><p>你可以从<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">这个页面</a>下载git，并且安装。</p>
+<p>安装完成后，你如果想从 cmd 直接运行的 git 的话需要重启系统，因为 windows10 的环境变量不是实时更新的。更多相关资料可以点<a href="https://blog.csdn.net/liufangbaishi2014/article/details/75330766" target="_blank" rel="noopener">这里</a></p>
 <p>当然，不需要直接运行的话也可以按照下面的步骤来</p>
-<h4 id="git的配置"><a href="#git的配置" class="headerlink" title="git的配置"></a>git的配置</h4><p>安装完成后，你可以在桌面右键，选择Git Bash Here<br><img src="https://i.loli.net/2019/07/19/5d31db111dafd66201.png" alt="Git Bash Here"></p>
+<h4 id="git的配置"><a href="#git的配置" class="headerlink" title="git的配置"></a>git的配置</h4><p>安装完成后，你可以在桌面右键，选择 Git Bash Here<br><img src="https://i.loli.net/2019/07/19/5d31db111dafd66201.png" alt="Git Bash Here"></p>
 <p>然后输入下面两行代码</p>
 <pre><code>git config --global user.name &quot;John Doe&quot;
-git config --global user.email johndoe@example.com</code></pre><p>注意，在这里的 John Doe是你的名字，<a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a>是你的邮箱。</p>
-<p>这两行表示你新建了一个用户名叫John Doe 邮箱是<a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a>的git账户。输错了不要急，可以修改的，具体怎么修改可以自行搜索。</p>
+git config --global user.email johndoe@example.com</code></pre><p>注意，在这里的 John Doe 是你的名字，<a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 是你的邮箱。</p>
+<p>这两行表示你新建了一个用户名叫 John Doe 邮箱是 <a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 的git账户。输错了不要急，可以修改的，具体怎么修改可以自行搜索。</p>
 <h4 id="生成ssh公钥和密钥"><a href="#生成ssh公钥和密钥" class="headerlink" title="生成ssh公钥和密钥"></a>生成ssh公钥和密钥</h4><p>输入</p>
 <pre><code>ssh-keygen -t rsa -C &quot;johndoe@example.com&quot;</code></pre><p>然后一路按回车生成你的公钥和密钥</p>
-<p>在这里的 <a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a>是你刚刚输入的邮箱，用了这条命令，你的<code>C:\Users\&lt;用户名&gt;\.ssh</code>文件夹中会生成两个文件<code>id_rsa</code>和<code>id_rsa.pub</code>。其中<code>id_rsa.pub</code>这个文件中就存放着我们的公钥。</p>
+<p>在这里的 <a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 是你刚刚输入的邮箱，用了这条命令，你的<code>C:\Users\&lt;用户名&gt;\.ssh</code>文件夹中会生成两个文件<code>id_rsa</code>和<code>id_rsa.pub</code>。其中<code>id_rsa.pub</code>这个文件中就存放着我们的公钥。</p>
 
                 <hr>
                 <div>
