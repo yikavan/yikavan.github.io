@@ -93,7 +93,7 @@
 <p>基本流程就是这样，那么就开始吧~</p>
 <h1 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h1><p>下面分为两个部分来说，一个是本地的 windows 环境，一个是 vps 上的 linux 环境。<br>我用的是 windows10 和 debian9。其他的系统也大同小异。</p>
 <h2 id="Windows-环境"><a href="#Windows-环境" class="headerlink" title="Windows 环境"></a>Windows 环境</h2><h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><h4 id="git的下载"><a href="#git的下载" class="headerlink" title="git的下载"></a>git的下载</h4><p>你可以从<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">这个页面</a>下载git，并且安装。</p>
-<p>安装完成后，你如果想从 cmd 直接运行的 git 的话需要重启系统，因为 windows10 的环境变量不是实时更新的。更多相关资料可以点<a href="https://blog.csdn.net/liufangbaishi2014/article/details/75330766" target="_blank" rel="noopener">这里</a></p>
+<p>安装完成后，你如果想从 cmd 直接运行的 git 的话需要重启系统，因为 windows10 的环境变量不是实时更新的。更多相关资料可以点<a href="https://blog.csdn.net/liufangbaishi2014/article/details/75330766" target="_blank" rel="noopener"><code>这里</code></a></p>
 <p>当然，不需要直接运行的话也可以按照下面的步骤来</p>
 <h4 id="git的配置"><a href="#git的配置" class="headerlink" title="git的配置"></a>git的配置</h4><p>安装完成后，你可以在桌面右键，选择 Git Bash Here<br><img src="https://i.loli.net/2019/07/19/5d31db111dafd66201.png" alt="Git Bash Here"></p>
 <p>然后输入下面两行代码</p>
@@ -103,6 +103,64 @@ git config --global user.email johndoe@example.com</code></pre><p>注意，在�
 <h4 id="生成ssh公钥和密钥"><a href="#生成ssh公钥和密钥" class="headerlink" title="生成ssh公钥和密钥"></a>生成ssh公钥和密钥</h4><p>输入</p>
 <pre><code>ssh-keygen -t rsa -C &quot;johndoe@example.com&quot;</code></pre><p>然后一路按回车生成你的公钥和密钥</p>
 <p>在这里的 <a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 是你刚刚输入的邮箱，用了这条命令，你的<code>C:\Users\&lt;用户名&gt;\.ssh</code>文件夹中会生成两个文件<code>id_rsa</code>和<code>id_rsa.pub</code>。其中<code>id_rsa.pub</code>这个文件中就存放着我们的公钥。</p>
+<p>现在 Windows 端的 git 基本配置好了。</p>
+<h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><p>在<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener"><code>Node.js官网</code></a>下载最新版本并安装。一路 next 默认安装即可。</p>
+<h3 id="hexo"><a href="#hexo" class="headerlink" title="hexo"></a>hexo</h3><p>在任意位置新建文件夹，这个文件夹以后就是你的博客的根目录了。为方便说明，下面用 <code>D:\hexo</code> 这个文件夹做为演示。</p>
+<p><em>说明：如果这里你没有重启的话，会和之前的 git一样 Windows 不会实时的更新环境变量，导致虽然安装好了但不能直接调用。不过如果用 Git Bash Here在这个文件夹里面打开的话是可以直接调用的</em></p>
+<p>进入到刚刚建好的 <code>D:\hexo</code> 这个文件夹里面，右键选择用Git Bash Here打开，输入以下几行代码</p>
+<pre><code class="bash">npm install hexo-cli -g
+hexo init
+npm install
+hexo s
+</code></pre>
+<p>在这里 第二行的 <code>hexo init</code> 这个地方可能会等很久，因为众所周知的原因，国内对外网的支持并不好，所以耐心等待即可。</p>
+<p>当你看到界面上弹出 <code>INFO  Start blogging with Hexo!</code> 的字样时，说明hexo 已经在这个文件夹里拷贝了一份基础的框架，这个时候就可以输第三行代码 <code>npm install</code> 了。</p>
+<p>现在基本的框架都搭好了，输入第四行代码<code>hexo s</code> 等到提示</p>
+<pre><code>INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</code></pre><p>的时候，你就可以打开浏览器，输入 <code>http://localhost:4000</code> 来看你的博客的雏形了。大概长这样👇</p>
+<p><img src="https://i.loli.net/2019/07/20/5d32f1cbe97fa10567.png" alt="大概长这样"></p>
+<p>那么到了现在，Windows 端的基础的都搭好了，现在开始下一步吧。</p>
+<h2 id="Linux-环境"><a href="#Linux-环境" class="headerlink" title="Linux 环境"></a>Linux 环境</h2><p>首先链接到你的 vps，我用的是 xshell。</p>
+<p>登录之后更新软件源</p>
+<pre><code>sudo apt-get update</code></pre><h3 id="git-安装"><a href="#git-安装" class="headerlink" title="git 安装"></a>git 安装</h3><pre><code class="bash">sudo apt-get install git-core</code></pre>
+<p>安装好了之后可以用 git –version查看是否安装成功。</p>
+<h3 id="nginx-安装"><a href="#nginx-安装" class="headerlink" title="nginx 安装"></a>nginx 安装</h3><p>我在直接用 </p>
+<pre><code class="bash">sudo apt-get install nginx</code></pre>
+<p>的时候发现我的搬瓦工的 debain9 不能安装上，最后是按官方的教程走的。</p>
+<p>官方的页面在<a href="http://nginx.org/en/linux_packages.html#Debian" target="_blank" rel="noopener">这里</a></p>
+<p>安装好后可以通过</p>
+<pre><code>nginx -v</code></pre><p>来查看是否安装成功。</p>
+<h3 id="新增-git-用户并添加sudo权限"><a href="#新增-git-用户并添加sudo权限" class="headerlink" title="新增 git 用户并添加sudo权限"></a>新增 git 用户并添加sudo权限</h3><pre><code>adduser git
+chmod 740 /etc/sudoers
+nano /etc/sudoers</code></pre><p>这里用 nano 编辑器打开了 <code>sudoers</code> 这个文件。对初学者而言，nano 编辑器更为直观。</p>
+<p>在文件中找到如下内容</p>
+<pre><code># User privilege specification
+root    ALL=(ALL)     ALL</code></pre><p>找到后在下面新增一行</p>
+<pre><code>git   ALL=(ALL)     ALL</code></pre><p>按 <code>Ctrl+X</code> 退出，这时会提醒你要不要保存，输入 <code>y</code> 确认保存，按下回车进行保存。</p>
+<p>保存后输入</p>
+<pre><code>chmod 440 /etc/sudoers</code></pre><p>恢复初始权限</p>
+<h3 id="创建-git-仓库，并配置-ssh-登录"><a href="#创建-git-仓库，并配置-ssh-登录" class="headerlink" title="创建 git 仓库，并配置 ssh 登录"></a>创建 git 仓库，并配置 ssh 登录</h3><pre><code>su git
+cd ~
+mkdir .ssh &amp;&amp; cd .ssh
+touch authorized_keys
+nano authorized_keys</code></pre><p>在打开的页面，复制<code>id_rsa.pub</code>这个文件中存放着的公钥，按 <code>Shift+Insert</code> 粘贴进去。粘贴好后，和上面一样保存并退出。</p>
+<p>退出来后测试一下，如果在git bash中输入</p>
+<pre><code>ssh git@vps的ip地址</code></pre><p>能够远程登录的话，则表示设置成功了。</p>
+<p>如果在这里，你的 vps 的 ssh 端口不是默认的22端口的话，则需要加入参数 -p 你的 vps 的 ssh 端口号，如下面这样</p>
+<pre><code>ssh git@vps的ip地址 -p 你的 vps 的端口号
+#下面举个例说明
+ssh git@123.234.123.234 -p 12345</code></pre><p>为了避免以后麻烦需要添加配置文件方便登录。不然就要在后面的讲的本地配置上</p>
+<p>到你的电脑的<code>C:\Users\&lt;用户名&gt;\.ssh</code>文件夹中，新建一个叫 <code>config</code> 的文件。没有后缀名。打开它，输入</p>
+<pre><code>Host 你的 vps 的 ip 地址
+User git
+Port 你的 vps 的 ssh 端口
+IdentityFile ~/.ssh/id_rsa
+#下面举个例子说明
+Host 123.234.123.234
+User git
+Port 12345
+IdentityFile ~/.ssh/id_rsa</code></pre><pre><code>cd ~ 
+mkdir hexo.git &amp;&amp; cd hexo.git
+git init --bare</code></pre><p>这就创建好了一个裸的仓库</p>
 
                 <hr>
                 <div>
