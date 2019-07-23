@@ -219,7 +219,7 @@ cp -rf ${TMP_GIT_CLONE}/* ${PUBLIC_WWW}</code></pre><p>然后给这个脚本赋�
 <pre><code>hexo clean 
 hexo g
 hexo d</code></pre><p>现在，我们的 vps 上的仓库就有了我们的文件。它收到了 post 后就会启动 <code>post-receive</code> 脚本，把我们的网站放到指定的目录里面。现在，你就可以通过 直接访问你的 vps 的地址来查看你的博客了。</p>
-<h1 id="更新博客"><a href="#更新博客" class="headerlink" title="更新博客"></a>更新博客</h1><p>hexo 是通过你的 <code>~\source\_posts</code> 文件夹里面的 <code>.md</code> 文件来生成页面的。所以要会 markdown 语法。可以看<a href="https://coding.net/help/doc/project/markdown.html" target="_blank" rel="noopener">这个网页</a> 来学习基本的 markdown 语法。</p>
+<h1 id="hexo-相关"><a href="#hexo-相关" class="headerlink" title="hexo 相关"></a>hexo 相关</h1><h2 id="更新博客"><a href="#更新博客" class="headerlink" title="更新博客"></a>更新博客</h2><p>hexo 是通过你的 <code>~\source\_posts</code> 文件夹里面的 <code>.md</code> 文件来生成页面的。所以要会 markdown 语法。可以看<a href="https://coding.net/help/doc/project/markdown.html" target="_blank" rel="noopener">这个网页</a> 来学习基本的 markdown 语法。</p>
 <p>每篇文章抬头都要有这篇文章的基本信息 ，注意在 冒号<code>:</code> 后面要有一个空格隔开。</p>
 <pre><code>title: title
 date: yyyy-mm-dd
@@ -233,7 +233,26 @@ tags: tag
 #- tag2  
 #- tag3  
 ---  
-正文  </code></pre>
+正文  </code></pre><p>完成后你只需要在 <code>cmd</code> 或者 <code>git bash</code> 里面运行 </p>
+<pre><code>hexo clean
+hexo g
+hexo d</code></pre><p>就可以了<br>嫌麻烦的话可以在 <code>D:\hexo</code> 这个文件夹里面新建一个 <code>post.bat</code> 文件，输入以下内容</p>
+<pre><code>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</code></pre><p>这样就能每次双击运行 <code>post.bat</code> 文件来达到推送的目的。</p>
+<h2 id="修改主题"><a href="#修改主题" class="headerlink" title="修改主题"></a>修改主题</h2><p>把你在 github 上下载的 文件夹放到 <code>D:\hexo\themes</code> 文件夹里面，然后修改 <code>D:\hexo</code> 文件夹里面的 <code>_config.yml</code> 文件里面的</p>
+<pre><code># Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: Material-T</code></pre><p>这个地方的 <code>theme: Material-T</code> 为你的主题的文件夹的名字就可以了。然后运行</p>
+<pre><code>hexo clean 
+hexo s</code></pre><p>就能看你的新主题了。</p>
+<p>对于主题的配置，我们需要看官方文档，因为可能有很多需要修改的地方。可以看看<a href="https://easyhexo.com/" target="_blank" rel="noopener">这个网站</a>，来找到你喜欢的主题并且配置到本地。</p>
+<h1 id="尾巴"><a href="#尾巴" class="headerlink" title="尾巴"></a>尾巴</h1><p>这次建站主要是没有相关的知识，所以两眼一抹瞎，只能走一步看一步，走一步学一步。遇到了问题就上网查，最关键的是找官方的文档来看，就比如我写的下载 nginx 的那个，最开始我直接用的 <code>apt-get</code> 下载的，根本没办法用，用 <code>nginx -v</code> 一点反应都没有。没办法只能去官方网站看看。所幸跟它一步步走了之后的确安装好了 nginx 。不过背后有什么问题还是不清楚。</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p>能建好网站，能写出这篇文章，离不开这些文章的指导</p>
+<p><a href="https://leihungjyu.com/post/hexo-blog-git-to-vps.html" target="_blank" rel="noopener">https://leihungjyu.com/post/hexo-blog-git-to-vps.html</a></p>
+<p><a href="https://mystery0.vip/2017/01/11/%E4%B8%AA%E4%BA%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2%EF%BC%88Windows%E7%AF%87%EF%BC%89/" target="_blank" rel="noopener">https://mystery0.vip/2017/01/11/%E4%B8%AA%E4%BA%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2%EF%BC%88Windows%E7%AF%87%EF%BC%89/</a></p>
+<p><a href="https://tiktoking.github.io/2016/01/26/hexo/" target="_blank" rel="noopener">https://tiktoking.github.io/2016/01/26/hexo/</a></p>
+<p><a href="https://segmentfault.com/a/1190000006745478" target="_blank" rel="noopener">https://segmentfault.com/a/1190000006745478</a></p>
+
                 <hr>
                 <div>
                     <p>
