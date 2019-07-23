@@ -97,8 +97,9 @@
 <p>当然，不需要直接运行的话也可以按照下面的步骤来</p>
 <h4 id="git的配置"><a href="#git的配置" class="headerlink" title="git的配置"></a>git的配置</h4><p>安装完成后，你可以在桌面右键，选择 Git Bash Here<br><img src="https://i.loli.net/2019/07/19/5d31db111dafd66201.png" alt="Git Bash Here"></p>
 <p>然后输入下面两行代码</p>
-<pre><code>git config --global user.name &quot;John Doe&quot;
-git config --global user.email johndoe@example.com</code></pre><p>注意，在这里的 John Doe 是你的名字，<a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 是你的邮箱。</p>
+<pre><code class="bash">git config --global user.name &quot;John Doe&quot;
+git config --global user.email johndoe@example.com</code></pre>
+<p>注意，在这里的 John Doe 是你的名字，<a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 是你的邮箱。</p>
 <p>这两行表示你新建了一个用户名叫 John Doe 邮箱是 <a href="mailto:johndoe@example.com" target="_blank" rel="noopener">johndoe@example.com</a> 的git账户。输错了不要急，可以修改的，具体怎么修改可以自行搜索。</p>
 <h4 id="生成ssh公钥和密钥"><a href="#生成ssh公钥和密钥" class="headerlink" title="生成ssh公钥和密钥"></a>生成ssh公钥和密钥</h4><p>输入</p>
 <pre><code>ssh-keygen -t rsa -C &quot;johndoe@example.com&quot;</code></pre><p>然后一路按回车生成你的公钥和密钥</p>
@@ -148,8 +149,8 @@ nano authorized_keys</code></pre><p>在打开的页面，复制<code>id_rsa.pub<
 <p>如果在这里，你的 vps 的 ssh 端口不是默认的22端口的话，则需要加入参数 -p 你的 vps 的 ssh 端口号，如下面这样</p>
 <pre><code>ssh git@vps的ip地址 -p 你的 vps 的端口号
 #下面举个例说明
-ssh git@123.234.123.234 -p 12345</code></pre><p>为了避免以后麻烦需要添加配置文件方便登录。不然就要在后面的讲的本地配置上</p>
-<p>到你的电脑的<code>C:\Users\&lt;用户名&gt;\.ssh</code>文件夹中，新建一个叫 <code>config</code> 的文件。没有后缀名。打开它，输入</p>
+ssh git@123.234.123.234 -p 12345</code></pre><p>为了避免以后麻烦需要添加配置文件方便登录。</p>
+<p>到你的电脑的 <code>C:\Users\&lt;用户名&gt;\.ssh</code> 文件夹中，新建一个叫 <code>config</code> 的文件。<strong>没有后缀名</strong>。打开它，输入</p>
 <pre><code>Host 你的 vps 的 ip 地址
 User git
 Port 你的 vps 的 ssh 端口
@@ -158,10 +159,81 @@ IdentityFile ~/.ssh/id_rsa
 Host 123.234.123.234
 User git
 Port 12345
-IdentityFile ~/.ssh/id_rsa</code></pre><pre><code>cd ~ 
+IdentityFile ~/.ssh/id_rsa</code></pre><p>这里遇到了小坑.就是第四行的那个 IdentityFile 有些人的教程上写的是IdentifyFile，这个简单的错误导致我查了半天错都没搞出来。英语真的很重要。 </p>
+<p>现在我们通过 git bash ，利用公钥文件登陆到了 vps。</p>
+<p>下面我们进行仓库的创建</p>
+<pre><code>cd ~ 
 mkdir hexo.git &amp;&amp; cd hexo.git
-git init --bare</code></pre><p>这就创建好了一个裸的仓库</p>
-
+git init --bare</code></pre><p>这就创建好了一个裸的仓库。之后我们的博客就上传到这个目录里面。</p>
+<h3 id="创建网站目录，并赋予-git-用户对此目录的所有权"><a href="#创建网站目录，并赋予-git-用户对此目录的所有权" class="headerlink" title="创建网站目录，并赋予 git 用户对此目录的所有权"></a>创建网站目录，并赋予 git 用户对此目录的所有权</h3><pre><code class="bash">cd /var/www  #这里的目录可以随意。不过后续的 nginx 的配置也要跟着变。
+mkdir hexo
+chown git:git -R /var/www/hexo</code></pre>
+<h3 id="配置-git-hooks"><a href="#配置-git-hooks" class="headerlink" title="配置 git hooks"></a>配置 git hooks</h3><p>先简单的解释下什么是 git hooks吧。</p>
+<blockquote>
+<p>Git Hooks就是那些在Git执行特定事件（如commit、push、receive等）后触发运行的脚本。</p>
+</blockquote>
+<p>简单地说就是在git操作之后的自动化操作。在我们这里就是利用它实现当 vps 上的 <code>hexo.git</code> 这个仓库被推送了新的 post 之后，我们把推送上来的 hexo 博客的源文件转化为可以被访问的网页文件并且放置在我们设定的网站目录中。</p>
+<p>下面开始配置当接收到 post 后的自动操作</p>
+<pre><code>su git
+cd /home/git/hexo.git/hooks
+nano post-receive</code></pre><p>现在打开了名为 <code>post-receive</code> 的配置文件。在文件中输入以下内容并保存退出。</p>
+<pre><code>#!/bin/bash
+GIT_REPO=/home/git/hexo.git #git仓库
+TMP_GIT_CLONE=/tmp/hexo
+PUBLIC_WWW=/var/www/hexo #网站目录，就是在上一小节你新建的目录
+rm -rf ${TMP_GIT_CLONE}
+git clone $GIT_REPO $TMP_GIT_CLONE
+rm -rf ${PUBLIC_WWW}/*
+cp -rf ${TMP_GIT_CLONE}/* ${PUBLIC_WWW}</code></pre><p>然后给这个脚本赋予执行权限</p>
+<pre><code>chmod +x post-receive</code></pre><h3 id="配置-nginx"><a href="#配置-nginx" class="headerlink" title="配置 nginx"></a>配置 nginx</h3><p>我们利用 nginx 来做到当监听端口收到消息后，把服务器上的资源发给浏览器。</p>
+<pre><code>nano /etc/nginx/conf.d/hexo.conf</code></pre><p>输入以下内容</p>
+<pre><code>server {
+    listen         80 ;//监听 80 端口
+    root /var/www/hexo;//你的网页的位置，就是上面你新建的目录
+    server_name _;      
+    access_log  /var/log/nginx/hexo_access.log;
+    error_log   /var/log/nginx/hexo_error.log;
+    location ~* ^.+\.(ico|gif|jpg|jpeg|png)$ {
+            root /var/www/hexo;
+            access_log   off;
+            expires      1d;
+    }
+    location ~* ^.+\.(css|js|txt|xml|swf|wav)$ {
+        root /var/www/hexo;
+        access_log   off;
+        expires      10m;
+    }
+    location / {
+        root /var/www/hexo;
+        if (-f $request_filename) {
+            rewrite ^/(.*)$  /$1 break;
+        }
+    }
+}</code></pre><p>第4行的 server_name 那里，可以只填一个下划线。我最开始是直接用 ip 地址访问的服务器，后来申请了一个免费域名，这个地方也没改，也还是能用。所以应该不会有太大的问题。</p>
+<p>重启 nginx </p>
+<pre><code>nginx -s reload</code></pre><h2 id="本机的最后配置"><a href="#本机的最后配置" class="headerlink" title="本机的最后配置"></a>本机的最后配置</h2><h3 id="配置-hexo-配置文件"><a href="#配置-hexo-配置文件" class="headerlink" title="配置 hexo 配置文件"></a>配置 hexo 配置文件</h3><p>打开本机的 <code>D:\hexo</code> 文件夹，编辑 <code>_config.yml</code> 文件，找到 `deploy’项，并且修改成下面这个样子</p>
+<pre><code>deploy:
+  type: git
+  repo: git@123.234.123.234:hexo.git </code></pre><p><code>type</code> 是 <code>git</code> 不能变。能变的是第二行的。<br><code>repo: A@B:C</code> 这个结构里面， <code>A</code> 是你新建好的 git 用户的用户名，<code>B</code> 是你的 vps 的地址， <code>C</code> 是你的仓库的地址。</p>
+<h3 id="推送到-vps"><a href="#推送到-vps" class="headerlink" title="推送到 vps"></a>推送到 <code>vps</code></h3><p>打开本机的 <code>D:\hexo</code> 文件夹，右键选择 <code>git bash here</code> 然后运行 </p>
+<pre><code>hexo clean 
+hexo g
+hexo d</code></pre><p>现在，我们的 vps 上的仓库就有了我们的文件。它收到了 post 后就会启动 <code>post-receive</code> 脚本，把我们的网站放到指定的目录里面。现在，你就可以通过 直接访问你的 vps 的地址来查看你的博客了。</p>
+<h1 id="更新博客"><a href="#更新博客" class="headerlink" title="更新博客"></a>更新博客</h1><p>hexo 是通过你的 <code>~\source\_posts</code> 文件夹里面的 <code>.md</code> 文件来生成页面的。所以要会 markdown 语法。可以看<a href="https://coding.net/help/doc/project/markdown.html" target="_blank" rel="noopener">这个网页</a> 来学习基本的 markdown 语法。</p>
+<p>每篇文章抬头都要有这篇文章的基本信息 ，注意在 冒号<code>:</code> 后面要有一个空格隔开。</p>
+<pre><code>title: title
+date: yyyy-mm-dd
+categories: category  
+tags: tag
+#多标签请这样写：  
+#tags: [tag1,tag2,tag3]
+#或者这样写： 
+#tags:
+#- tag1 
+#- tag2  
+#- tag3  
+---  
+正文  </code></pre>
                 <hr>
                 <div>
                     <p>
